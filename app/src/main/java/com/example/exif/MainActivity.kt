@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import java.io.File
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 
 
@@ -39,7 +40,7 @@ class MainActivity : AppCompatActivity() {
             proj,  // Which columns to return
             null,  // WHERE clause; which rows to return (all rows)
             null,  // WHERE clause selection arguments (none)
-            null
+            MediaStore.Images.Media.DEFAULT_SORT_ORDER
         ) // Order-by clause (ascending by name)
         val column_index: Int = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         cursor.moveToFirst()
@@ -57,12 +58,11 @@ class MainActivity : AppCompatActivity() {
                 val exif = ExifInterface(file)
                 val array = FloatArray(2)
                 exif.getLatLong(array)
-                System.out.println(array[0])
-                val calendar: Calendar = Calendar.getInstance()
-                calendar.setTimeInMillis(exif.dateTime)
-                val formatter = SimpleDateFormat("MM/dd/yyyy hh:mm:ss.SSS")
+                //default value is 0/0
 
-                sb.append("Photo $i: lat: " + array[0] + " long: " + array[1]  + " time: " + formatter.format(calendar.getTime()) + "\n")
+                val formatterDate = SimpleDateFormat("MM/dd/yyyy", Locale.US)
+                val formatterTime = SimpleDateFormat("hh:mm:ss", Locale.US)
+                sb.append("Photo $i: lat: " + array[0] + " long: " + array[1]  + " date: " + formatterDate.format(exif.dateTimeOriginal) + " time: " + formatterTime.format(exif.dateTimeOriginal) + "\n")
             }
             text.setText(sb.toString())
 
