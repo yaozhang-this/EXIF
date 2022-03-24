@@ -47,6 +47,10 @@ class MainActivity : AppCompatActivity() {
     }//https://stackoverflow.com/questions/18590514/loading-all-the-images-from-gallery-into-the-application-in-android
 
     fun readAll(arrayList : ArrayList<String>){
+        if (arrayList.size == 0) {
+            text.setText("No photos detected!")
+            return
+        }
         val sb = StringBuilder()
         for (i in 0..arrayList.size -1){
             val path = arrayList[i]
@@ -54,7 +58,8 @@ class MainActivity : AppCompatActivity() {
             val file = File(path)
             val exif = ExifInterface(file)
             val array = FloatArray(2)
-            exif.getLatLong(array)
+            //if no latlong data, dont read them
+            if (!exif.getLatLong(array)) continue
             //default value is 0/0
 
             val formatterDate = SimpleDateFormat("MM/dd/yyyy", Locale.US)
